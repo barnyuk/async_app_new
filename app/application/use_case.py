@@ -1,7 +1,6 @@
 from app.models.models import ProtocolData
 from app.infrastructure.pydantic_model import SourceData
 from app.application.ports import ServerPort, DocxPort
-import asyncio
 
 
 class GenerateProtocolsUseCase:

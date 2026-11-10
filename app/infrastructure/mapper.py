@@ -1,10 +1,11 @@
 from collections import defaultdict
 
 from app.infrastructure.api_model import ServerResponse
-from app.models.models import ParsedStation
+from app.infrastructure.parsed_model import ParsedStation
+
 
 def process_stations(response: ServerResponse) -> list[ParsedStation]:
-    # Используем словарь для группировки по BSN (если придет несколько БС в ответе)
+
     stations = {}
 
     for feature in response.features:
@@ -51,3 +52,5 @@ def process_stations(response: ServerResponse) -> list[ParsedStation]:
         ))
 
     return result
+
+

@@ -1,3 +1,4 @@
+import asyncio
 from app.infrastructure.pydantic_model import SourceData
 from app.infrastructure.stubs import StubServer, StubDocx
 from app.application.use_case import GenerateProtocolsUseCase
@@ -18,6 +19,9 @@ test_data = SourceData(
         is_builders = False
     )
 
+def main():
+    use_case = GenerateProtocolsUseCase(StubServer(), StubDocx())
+    asyncio.run(use_case.execute(test_data))
 
-use_case = GenerateProtocolsUseCase(StubServer(), StubDocx())
-use_case.execute(test_data)
+if __name__ == '__main__':
+    main()

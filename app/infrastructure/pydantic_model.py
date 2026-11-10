@@ -1,8 +1,6 @@
 from pydantic import BaseModel, Field, field_validator, model_validator
 
 
-from pydantic import BaseModel, Field, field_validator, model_validator
-
 class SourceData(BaseModel):
     output_dir: str = Field(min_length=1)
     prev_prot_dir: str = Field(min_length=1)
@@ -23,6 +21,7 @@ class SourceData(BaseModel):
         'job_title', 'temperature', 'humidity',
         mode='before'
     )
+
     @classmethod
     def strip_strings(cls, v):
         if isinstance(v, str):
