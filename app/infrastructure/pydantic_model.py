@@ -5,7 +5,7 @@ class SourceData(BaseModel):
     output_dir: str = Field(min_length=1)
     prev_prot_dir: str = Field(min_length=1)
     bsn_data: list[tuple[str, str]] = Field(min_length=1)
-    start_protocol_number: str = Field(min_length=1)
+    start_protocol_number: str
     protocol_date: str = Field(min_length=1)
     measurements_date: str = Field(min_length=1)
     temperature: str | None = None
@@ -43,31 +43,21 @@ class SourceData(BaseModel):
     @classmethod
     def validate_numeric(cls, v):
         if v is None or v == "":
-            return v
+            return None
         try:
-            float(v.replace(",", "."))
-        except ValueError:
-            raise ValueError("Ожидается число")
-        return v
-
-    @field_validator("bsn_data")
-    @classmethod
-    def validate_bsn_operators(cls, v):
-        allowed = {"A1", "BEST", "BE_CLOUD"}
-
-        for op, bsn_id in v:
-            if op not in allowed:
-                raise ValueError(f"Неизвестный оператор '{op}'. Допустимые: {', '.join(allowed)}")
-            if not bsn_id:
-                raise ValueError(f"У оператора {op} пустой BSN")
-
-        if len(v) != len(set(v)):
-            raise ValueError("Обнаружены дублирующиеся БС в списке")
-
-        return v
+            normalized = v.replace(",", ".")
+            float(normalized)
+        except ValueError as err:
+            raise ValueError("Ожидается число") from err
+        return normalized
 
     @model_validator(mode="after")
-    def check_at_least_one_protocol_type(self):
+    def validate_protocols_requirements(self):
         if not self.generate_work_protocols and not self.generate_final_protocols:
             raise ValueError("Выберите хотя бы один тип протоколов (рабочие или чистовые)")
+        if self.generate_final_protocols:
+            if self.temperature is None:
+                raise ValueError("Введите температуру")
+            if self.humidity is None:
+                raise ValueError("Введите влажность")
         return self

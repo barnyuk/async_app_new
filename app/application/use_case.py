@@ -4,13 +4,15 @@ from app.models.models import ProtocolData
 
 
 class GenerateProtocolsUseCase:
+    # принимает отвалидированный
+
     def __init__(self, server: ServerPort, docx: DocxPort):
         self.server = server
         self.docx = docx
 
     async def execute(self, data: SourceData) -> None:
 
-        server_data = await self.server.fetch_info(data)
+        server_data = self.server.fetch_info(data)
 
         protocols = []
 
