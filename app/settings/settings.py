@@ -1,6 +1,6 @@
 from pathlib import Path
 
-APP_NAME = 'protocol_app'
+APP_NAME = "protocol_app"
 
 PATH = Path(__file__).parent.parent.parent
 

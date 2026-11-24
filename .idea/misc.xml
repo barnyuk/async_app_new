@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="Black">
-    <option name="sdkName" value="Python 3.13 (async_app_new)" />
-  </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.13 (async_app_new)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="D:\Barnyuk\pc\async_app_new\.venv" project-jdk-type="Python SDK" />
 </project>

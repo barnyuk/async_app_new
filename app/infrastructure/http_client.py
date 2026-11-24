@@ -1,20 +1,20 @@
-import aiohttp
 import asyncio
-import requests
+
+import aiohttp
 import keyring
+import requests
+
 # from app.settings.settings import APP_NAME
 
-APP_NAME = 'protocol_app'
-
+APP_NAME = "protocol_app"
 
 
 keyring.set_password(APP_NAME, username, password)
 
 
 class HttpServerClient:
-
     # еще я должен получить токен))
-    TOKEN_URL = 'https://xn--80atti9b.xn--80ad2a0b1c.xn--90ais/elitegis/tokens/generateToken/'
+    TOKEN_URL = "https://xn--80atti9b.xn--80ad2a0b1c.xn--90ais/elitegis/tokens/generateToken/"
     TIMEOUT = 5
 
     def __init__(self, timeout_sec: int = 5, max_concurrent: int = 5):
@@ -24,11 +24,10 @@ class HttpServerClient:
 
     async def fetch_info(self, token: str, items: list[tuple[str, str]]) -> list[dict | None]:
         async with aiohttp.ClientSession(timeout=self.timeout) as session:
-
             tasks = [BsnTask(token, session, item, self.semaphore)() for item in items]
-            
+
             results = await asyncio.gather(*tasks)
-            
+
             return list(results)
 
     @property
@@ -38,23 +37,29 @@ class HttpServerClient:
 
         response = requests.post(
             self.TOKEN_URL,
-            data={'username': username, 'password': password, 'f': 'json'},
+            data={"username": username, "password": password, "f": "json"},
             timeout=self.TIMEOUT,
         ).json()
 
-        token = response.get('token') if isinstance(response, dict) else None
-        
+        token = response.get("token") if isinstance(response, dict) else None
+
         if not isinstance(token, str) or not token:
-            raise ValueError('Authentication failed: the service did not return a token.')
+            raise ValueError("Authentication failed: the service did not return a token.")
 
         return token
 
+
 class BsnTask:
+    MAP_URL = "https://xn--80atti9b.xn--80ad2a0b1c.xn--90ais/elitegis/rest/services/TEST/Test1sl/MapServer/4/query"
+    OPERATOR_MNC = {"A1": "1", "BEST": "4", "BE_CLOUD": "6"}
 
-    MAP_URL = 'https://xn--80atti9b.xn--80ad2a0b1c.xn--90ais/elitegis/rest/services/TEST/Test1sl/MapServer/4/query'
-    OPERATOR_MNC = {'A1': '1', 'BEST': '4', 'BE_CLOUD': '6'}
-
-    def __init__(self, token: str, session: aiohttp.ClientSession, item: tuple[str, str], semaphore: asyncio.Semaphore):
+    def __init__(
+        self,
+        token: str,
+        session: aiohttp.ClientSession,
+        item: tuple[str, str],
+        semaphore: asyncio.Semaphore,
+    ):
         self.token = token
         self.session = session
         self.item = item
@@ -69,10 +74,10 @@ class BsnTask:
                 response.raise_for_status()
                 print(response)
                 # Возвращаем JSON, а не сам объект response!
-                data = await response.json()                
-                return data               
-            
-            except asyncio.TimeoutError:
+                data = await response.json()
+                return data
+
+            except TimeoutError:
                 print(f"Таймаут для {self.item}")
                 return None
             except aiohttp.ClientError as e:
@@ -85,16 +90,16 @@ class BsnTask:
     def prepare_params(self, token: str, item: tuple[str, str]) -> dict[str, str]:
         operator, bsn_id = item
         mnc = self.OPERATOR_MNC.get(operator)
-        
+
         if mnc is None:
             raise ValueError(f"Неизвестный оператор: {operator}")
 
         return {
-            'f': 'json',
-            'token': token,
-            'where': f"mnc = '{mnc}' AND bsn = '{bsn_id}'",
-            'returnCountOnly': 'false',
-            'outFields': '*',
+            "f": "json",
+            "token": token,
+            "where": f"mnc = '{mnc}' AND bsn = '{bsn_id}'",
+            "returnCountOnly": "false",
+            "outFields": "*",
         }
 
 

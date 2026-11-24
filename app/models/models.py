@@ -6,9 +6,9 @@ class ProtocolData:
     address: str
     bsn: tuple[str, str]
     protocol_number: str
-    protocol_date: str 
+    protocol_date: str
     measurements_date: str
-    job_title: str 
+    job_title: str
     standart: list
     freq: dict
     standart_in_use: list[str]
@@ -18,7 +18,3 @@ class ProtocolData:
     freq_builders: dict[str, list[float]]
     temperature: str | None = None
     humidity: str | None = None
-
-    
-    
-

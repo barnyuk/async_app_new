@@ -1,6 +1,6 @@
-from app.models.models import ProtocolData
+from app.application.ports import DocxPort, ServerPort
 from app.infrastructure.pydantic_model import SourceData
-from app.application.ports import ServerPort, DocxPort
+from app.models.models import ProtocolData
 
 
 class StubServer(ServerPort):
@@ -9,10 +9,9 @@ class StubServer(ServerPort):
         # Возвращаем фейковый ответ (типа сервер прислал 2 записи)
         return [{"bsn_id": "111", "op": "A1"}, {"bsn_id": "222", "op": "BEST"}]
 
+
 class StubDocx(DocxPort):
     def generate(self, protocols: list[ProtocolData], output_dir: str) -> None:
         print(f"[StubDocx] Сохраняем {len(protocols)} протоколов в {output_dir}")
         for p in protocols:
             print(f"  - Номер: {p.protocol_number}, БСН: {p.bsn}, Тип: {p.protocol_type}")
-
-

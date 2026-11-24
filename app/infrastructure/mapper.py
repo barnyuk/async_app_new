@@ -33,7 +33,7 @@ def process_stations(response: ServerResponse) -> list[ParsedStation]:
         if attr.status == "Эксплуатация":
             data["standart_in_use"].add(attr.standart)
             data["freq_in_use"][attr.freq].add(attr.azimuth)
-            
+
         elif attr.status == "Проектирование и строительство":
             data["standart_builders"].add(attr.standart)
             data["freq_builders"][attr.freq].add(attr.azimuth)
@@ -41,16 +41,16 @@ def process_stations(response: ServerResponse) -> list[ParsedStation]:
     # Превращаем сеты и defaultdict обратно в списки и обычные словари для Pydantic
     result = []
     for bsn, data in stations.items():
-        result.append(ParsedStation(
-            address=data["address"],
-            bsn=data["bsn"],
-            standart_in_use=sorted(list(data["standart_in_use"])),
-            # Сортируем азимуты по возрастанию для красоты
-            freq_in_use={k: sorted(list(v)) for k, v in data["freq_in_use"].items()},
-            standart_builders=sorted(list(data["standart_builders"])),
-            freq_builders={k: sorted(list(v)) for k, v in data["freq_builders"].items()},
-        ))
+        result.append(
+            ParsedStation(
+                address=data["address"],
+                bsn=data["bsn"],
+                standart_in_use=sorted(list(data["standart_in_use"])),
+                # Сортируем азимуты по возрастанию для красоты
+                freq_in_use={k: sorted(list(v)) for k, v in data["freq_in_use"].items()},
+                standart_builders=sorted(list(data["standart_builders"])),
+                freq_builders={k: sorted(list(v)) for k, v in data["freq_builders"].items()},
+            )
+        )
 
     return result
-
-
